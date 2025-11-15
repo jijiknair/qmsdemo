@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Quotation</title>
+
+    <style>
+        /* ================= GLOBAL STYLE FROM SALESDASHBOARD ================= */
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ===== Navbar ===== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 22px;
+            letter-spacing: 1px;
+            color: #fff;
+            margin: 0;
+        }
+
+        .welcome {
+            color: #fff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* ===== Layout Structure ===== */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 25px;
+            padding: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* ===== Main Box ===== */
+        .main {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+        }
+
+        .main h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        /* ===== FORM INPUTS ===== */
+        label {
+            font-weight: 500;
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        input:focus {
+            border: 1px solid #ffd700;
+        }
+
+        /* ===== PRODUCTS TABLE ===== */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        th {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            background: #ffd700;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e6c200;
+        }
+
+        .remove-btn {
+            background: #ff4d4d;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+
+    <script>
+        function addProductRow() {
+            const table = document.getElementById('products-body');
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td><input type="text" name="product_name[]" required></td>
+                <td><input type="text" name="pack_size[]" required></td>
+                <td><input type="number" step="0.01" name="unit_price[]" required></td>
+                <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
+            `;
+            table.appendChild(row);
+        }
+
+        function removeRow(btn) {
+            btn.parentNode.parentNode.remove();
+        }
+    </script>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="welcome">Welcome, {{ request.user.username }}</div>
+        <h1>Create Quotation</h1>
+    </div>
+
+    <!-- PAGE LAYOUT -->
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <a href="/sales-dashboard/">Dashboard</a>
+            <a href="/create-quotation/">Create Quotation</a>
+            <a href="/view-quotations/">View Quotations</a>
+            <a href="/logout/">Logout</a>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main">
+            <h2>Quotation Details</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <h3 style="color:#ffd700;">Client Details</h3>
+
+                <label>Client Name</label>
+                <input type="text" name="client_name" required>
+
+                <label>Company</label>
+                <input type="text" name="client_company" required>
+
+                <label>Email</label>
+                <input type="email" name="client_email" required>
+
+                <label>Phone</label>
+                <input type="text" name="client_phone" required>
+
+
+                <h3 style="color:#ffd700;margin-top:25px;">Quotation Info</h3>
+
+                <label>Validity</label>
+                <input type="text" name="validity" list="validity_options" required>
+                <datalist id="validity_options">
+                    <option value="7 days">
+                    <option value="10 days">
+                    <option value="15 days">
+                    <option value="30 days">
+                    <option value="3 weeks">
+                    <option value="6 months">
+                    <option value="1 year">
+                </datalist>
+
+                <label>Delivery</label>
+                <input type="text" name="delivery" list="delivery_options" required>
+                <datalist id="delivery_options">
+                    <option value="Ex-Rusayl">
+                    <option value="Ex-Muscat">
+                    <option value="FOB Port">
+                </datalist>
+
+                <label>Payment Terms</label>
+                <input type="text" name="payment_terms" list="payment_options" required>
+                <datalist id="payment_options">
+                    <option value="60 days LPO">
+                    <option value="30 days LPO">
+                    <option value="Advance Payment">
+                </datalist>
+
+                <label>Warranty</label>
+                <input type="text" name="warranty" list="warranty_options">
+                <datalist id="warranty_options">
+                    <option value="1 year">
+                    <option value="6 months">
+                    <option value="No warranty">
+                </datalist>
+
+                <h3 style="color:#ffd700;margin-top:25px;">Products</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Pack Size</th>
+                            <th>Unit Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-body">
+                        <tr>
+                            <td><input type="text" name="product_name[]" required></td>
+                            <td><input type="text" name="pack_size[]" required></td>
+                            <td><input type="number" step="0.01" name="unit_price[]" required></td>
+                            <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button type="button" onclick="addProductRow()" style="margin-top:10px;">Add Product</button>
+
+                <br><br>
+
+                <button type="submit" style="width:100%;font-size:16px;font-weight:bold;">
+                    Generate PDF Quotation
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
