@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Client</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #0d1326; /* SAME AS DASHBOARD */
+        color: #fff;
+    }
+
+    /* NAVBAR */
+    .navbar {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px 35px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .navbar-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #ffd700;
+    }
+
+    /* PAGE CONTAINER */
+    .container-box {
+        width: 90%;
+        max-width: 700px;
+        margin: 40px auto;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 12px rgba(255,255,255,0.05);
+    }
+
+    h2 {
+        color: #ffd700;
+        margin-bottom: 20px;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    /* FORM INPUTS */
+    form label {
+        font-weight: 500;
+        margin-bottom: 6px;
+        display: block;
+        color: #ffd700;
+    }
+
+    form input, form textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    form input:focus, form textarea:focus {
+        border-color: #ffd700;
+        outline: none;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* BUTTONS */
+    button.submit-btn {
+        width: 100%;
+        background: #ffd700;
+        color: #000;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s ease;
+    }
+
+    button.submit-btn:hover {
+        background: #e6c300;
+        transform: translateY(-2px);
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-top: 20px;
+        color: #ffd700;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .back-btn:hover {
+        text-decoration: underline;
+    }
+
+</style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-title">QMS — Add New Client</div>
+
+        <div style="color:#ffd700; font-size:14px;">
+            {{ request.user.username }}
+        </div>
+    </div>
+
+    <div class="container-box">
+        <h2><i class="ri-user-add-line"></i> Create Client</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Company Name</label>
+            <input type="text" name="company_name" required>
+
+            <label>Contact Person</label>
+            <input type="text" name="contact_person">
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Phone</label>
+            <input type="text" name="phone">
+
+            <label>Address</label>
+            <textarea name="address"></textarea>
+
+            <button class="submit-btn">
+                <i class="ri-save-line"></i> Save Client
+            </button>
+        </form>
+
+        <a href="{% url 'my_clients' %}" class="back-btn">
+            <i class="ri-arrow-left-line"></i> Back to My Clients
+        </a>
+    </div>
+
+</body>
+</html>

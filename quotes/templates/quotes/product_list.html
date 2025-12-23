@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product List</title>
+
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <style>
+    /* ===== PAGE BACKGROUND (MATCHES SALES MANAGER DASHBOARD) ===== */
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #0a0f24, #162041);  /* DARK NAVY THEME */
+      color: #fff;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      padding: 18px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .navbar h1 {
+      margin: 0;
+      color: #ffd700; /* GOLD LIKE DASHBOARD */
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .container {
+      width: 92%;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* ===== TOP BUTTONS ===== */
+    .top-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #000;
+      transition: 0.25s ease;
+      font-size: 15px;
+    }
+
+    .add-btn {
+      background: #ffd700; /* GOLD */
+    }
+
+    .add-btn:hover {
+      background: #e6c300;
+      transform: translateY(-2px);
+    }
+
+    .back-btn {
+      background: #00eaff; /* ELECTRIC CYAN */
+    }
+
+    .back-btn:hover {
+      background: #00b8c8;
+      transform: translateY(-2px);
+    }
+
+    /* ===== TABLE ===== */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;   /* ⭐ IMPORTANT */
+      }
+
+    th, td {
+  padding: 16px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;      /* prevents jumping */
+}
+
+th {
+  background: rgba(255,255,255,0.15);
+  color: #ffd700;
+  font-weight: 600;
+}
+
+td {
+  background: rgba(255,255,255,0.08);
+  color: #ffffff;
+}
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-cell {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .view-btn { background: #28a745; }
+    .edit-btn { background: #17a2b8; }
+    .delete-btn { background: #dc3545; }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <h1>QMS SYSTEM | Product List</h1>
+  </div>
+
+  <!-- CONTENT BOX -->
+  <div class="container">
+
+    <div class="top-buttons">
+
+      {% if request.user.role == 'admin' %}
+      <a href="{% url 'admin_dashboard' %}" class="btn back-btn">
+        <i class="ri-arrow-left-line"></i> Back to Dashboard
+      </a>
+
+      {% elif request.user.role == 'salesmanager' %}
+      <a href="{% url 'salesmanager_dashboard' %}" class="btn back-btn">
+        <i class="ri-arrow-left-line"></i> Back to Dashboard
+      </a>
+
+      {% else %}
+      <a href="{% url 'salesperson_dashboard' %}" class="btn back-btn">
+        <i class="ri-arrow-left-line"></i> Back to Dashboard
+      </a>
+      {% endif %}
+      <div class="d-flex justify-content-between align-items-center mb-3">
+  
+  {% if request.user.role == 'admin' or request.user.role == 'salesmanager' %}
+<a href="{% url 'add_product' %}"
+   class="btn"
+   style="
+     background: linear-gradient(135deg, #FFD700, #FFC107);
+     color: #1f2937;
+     font-weight: 600;
+     border-radius: 10px;
+     padding: 10px 18px;
+     border: none;
+     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+   ">
+   ➕ Add Product
+</a>
+  {% endif %}
+</div>
+
+    </div>
+
+    <!-- TABLE -->
+    <table>
+      <thead>
+        <tr>
+          <th>S. No.</th>
+          <th>Product Name</th>
+          <th>Unit Price</th>
+          <th>Unit</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ product.name }}</td>
+          
+          <td>{{ product.unit_price }}</td>
+          <td>{{ product.unit }}</td>
+
+          <td class="action-cell">
+
+        <!-- VIEW (ALL ROLES) -->
+        <a href="{% url 'product_detail' product.id %}"
+          class="action-btn view-btn">
+          View
+        </a>
+
+        <!-- ADMIN ONLY -->
+        {% if request.user.role == 'admin' %}
+          
+          <a href="{% url 'product_edit' product.id %}"
+            class="action-btn edit-btn">
+            Edit
+          </a>
+
+          <a href="{% url 'product_delete' product.id %}"
+            class="action-btn delete-btn"
+            onclick="return confirm('Are you sure you want to delete this product?');">
+            Delete
+          </a>
+
+        {% endif %}
+
+      </td>
+
+        </tr>
+
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding:20px;">No products available.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Client</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
+      color: #fff;
+    }
+
+    .main-box {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      width: 50%;
+      margin: 80px auto;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #ff4d4d;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #000;
+      margin: 10px;
+    }
+
+    .btn-danger {
+      background: #ff4d4d;
+    }
+
+    .btn-danger:hover {
+      background: #d93636;
+    }
+
+    .btn-secondary {
+      background: #ffd700;
+    }
+
+    .btn-secondary:hover {
+      background: #e6c300;
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-box">
+  <h2><i class="ri-error-warning-line"></i> Confirm Delete</h2>
+
+  <p>Are you sure you want to delete <strong>{{ client.name }}</strong>?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="ri-delete-bin-line"></i> Yes, Delete
+    </button>
+    <a href="{% url 'client_management' %}" class="btn btn-secondary">
+      <i class="ri-arrow-go-back-line"></i> Cancel
+    </a>
+  </form>
+</div>
+
+</body>
+</html>

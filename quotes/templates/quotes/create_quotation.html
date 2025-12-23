@@ -1,311 +1,632 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Create Quotation</title>
+<meta charset="UTF-8">
+<title>Create Quotation | QMS</title>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
-    <style>
-        /* ================= GLOBAL STYLE FROM SALESDASHBOARD ================= */
-        body {
-            margin: 0;
-            font-family: "Poppins", sans-serif;
-            background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
-            color: #fff;
-            overflow-x: hidden;
-        }
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background: #0d1326;
+        color: white;
+    }
 
-        /* ===== Navbar ===== */
-        .navbar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            z-index: 10;
-        }
+    .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: rgba(255,255,255,0.06);
+        padding: 30px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
 
-        .navbar h1 {
-            flex: 1;
-            text-align: center;
-            font-size: 22px;
-            letter-spacing: 1px;
-            color: #fff;
-            margin: 0;
-        }
+    h2.section-title {
+        color: #ffd700;
+        margin-bottom: 15px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
 
-        .welcome {
-            color: #fff;
-            font-weight: 500;
-            font-size: 14px;
-        }
+    label {
+        font-size: 14px;
+        color: #ffd700;
+    }
 
-        /* ===== Layout Structure ===== */
-        .container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 25px;
-            padding: 25px;
-        }
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: white;
+        border-radius: 8px;
+        margin-top: 6px;
+        margin-bottom: 18px;
+    }
 
-        @media (max-width: 900px) {
-            .container { grid-template-columns: 1fr; }
-        }
+    textarea {
+        height: 110px;
+        resize: vertical;
+    }
 
-        /* ===== Sidebar ===== */
-        .sidebar {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 20px;
-            height: fit-content;
-        }
+    .btn {
+        background: #ffd700;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        color: black;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn:hover { background: #f5c400; }
 
-        .sidebar h2 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #ffd700;
-        }
+    .blue-btn {
+        background: #00eaff;
+        color: black;
+        margin-bottom: 20px;
+    }
 
-        .sidebar a {
-            display: block;
-            color: #fff;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background 0.3s, transform 0.2s;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255,255,255,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
 
-        .sidebar a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(5px);
-        }
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: left;
+    }
 
-        /* ===== Main Box ===== */
-        .main {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-        }
+    th { color: #ffd700; }
 
-        .main h2 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 10px;
-        }
+    .add-row-btn {
+        background: none;
+        color: #00eaff;
+        cursor: pointer;
+        border: none;
+        margin-top: 10px;
+        font-size: 15px;
+    }
 
-        /* ===== FORM INPUTS ===== */
-        label {
-            font-weight: 500;
-            display: block;
-            margin: 10px 0 5px;
-        }
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 25px;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            margin-bottom: 10px;
-            outline: none;
-        }
+    select, .product-select {
+        background-color: #1c233b !important;
+        color: #ffd700 !important;
+        border: 1px solid #ffd700;
+    }
 
-        input:focus {
-            border: 1px solid #ffd700;
-        }
+    /* ------------------ MODAL STYLE ------------------ */
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(3px);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+    .modal-content {
+        background: #1c233b;
+        padding: 25px;
+        border-radius: 12px;
+        width: 400px;
+        color: white;
+        border: 1px solid #ffd700;
+    }
+    select:focus {
+    color: #ffd700 !important;
+    }
+    /* ===== PRODUCT DROPDOWN FIX ===== */
 
-        /* ===== PRODUCTS TABLE ===== */
-        table {
-            width: 100%;
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            border-collapse: collapse;
-        }
+/* Select box */
+.product-select {
+    background-color: #1c233b !important;
+    color: #ffd700 !important;       /* GOLD text */
+    border: 2px solid #ffd700 !important;
+    font-weight: 600;
+    appearance: none;                /* IMPORTANT */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
+/* Dropdown options */
+.product-select option {
+    background-color: #1c233b !important;
+    color: #ffd700 !important;
+}
 
-        th {
-            color: #ffd700;
-            font-weight: 600;
-        }
 
-        /* ===== BUTTONS ===== */
-        button {
-            background: #ffd700;
-            border: none;
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 15px;
-            color: #000;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #e6c200;
-        }
-
-        .remove-btn {
-            background: #ff4d4d;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .remove-btn:hover {
-            background: #cc0000;
-        }
-    </style>
-
-    <script>
-        function addProductRow() {
-            const table = document.getElementById('products-body');
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td><input type="text" name="product_name[]" required></td>
-                <td><input type="text" name="pack_size[]" required></td>
-                <td><input type="number" step="0.01" name="unit_price[]" required></td>
-                <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
-            `;
-            table.appendChild(row);
-        }
-
-        function removeRow(btn) {
-            btn.parentNode.parentNode.remove();
-        }
-    </script>
+</style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="welcome">Welcome, {{ request.user.username }}</div>
-        <h1>Create Quotation</h1>
+<div class="container">
+     <!-- 🔴 ERROR / SUCCESS MESSAGES HERE -->
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background:#ff4c4c; padding:12px; border-radius:8px; margin-bottom:15px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+<!-- 🟩 BACK BUTTON — RIGHT TOP (NO UNDERLINE) -->
+<div style="margin-bottom:20px; display:flex; justify-content:flex-end;">
+    <a href="{% url 'salesperson_dashboard' %}" 
+       class="btn" 
+       style="background:#00eaff; color:black; padding:8px 16px; text-decoration:none;">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<form id="qtnForm" method="POST" action="{% url 'create_quotation' %}">
+    {% csrf_token %}
+    <input type="hidden" id="actionType" name="action">
+
+<!-- CLIENT SECTION -->
+<h2 class="section-title"><i class="ri-user-3-line"></i> Client Details</h2>
+
+<button type="button" class="btn blue-btn" onclick="openClientModal()">+ Add New Client</button>
+
+<label>Select Client</label>
+<select name="client_id" id="client-select" required>
+    <option value="">Select Client</option>
+    {% for c in clients %}
+        <option value="{{ c.id }}"
+            data-contact="{{ c.contact_person }}"
+            data-email="{{ c.email }}"
+            data-phone="{{ c.phone }}"
+            data-address="{{ c.address }}">
+            {{ c.company_name }}
+        </option>
+    {% endfor %}
+</select>
+
+<input type="text" id="client-person" name="contact_person" placeholder="Contact Person" readonly required>
+<input type="email" id="client-email" name="client_email" placeholder="Email" readonly required>
+<input type="text" id="client-phone" name="client_phone" placeholder="Phone" readonly>
+<textarea id="client-address" name="client_address" placeholder="Address" readonly></textarea>
+
+
+
+<!-- INTRO TEXT -->
+<h2 class="section-title"><i class="ri-text-spacing" required></i> Introductory Text</h2>
+
+<button type="button" class="btn blue-btn" onclick="openIntroModal()">+ Add Intro Text</button>
+
+<label>Choose Intro Text</label>
+<select id="intro-select">
+    <option value="">Select Intro</option>
+    {% for i in intro_texts %}
+    <option value="{{ i.text }}">{{ i.title }}</option>
+    {% endfor %}
+</select>
+
+<textarea id="intro-text" name="intro_text"></textarea>
+
+
+
+<!-- PRODUCT TABLE -->
+<h2 class="section-title"><i class="ri-archive-line"></i> Product Table</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Description</th>
+            <th>Pack Size</th>
+            <th>Base Price (RO)</th>
+            <th>Discount %</th>
+            <th>Final Price (RO)</th>
+            <th>Qty</th>
+            <th>Total (RO)</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody id="product-body">
+        <tr>
+            <td>
+                <select name="product" class="form-control product-select">
+                    <option value="">Select Product</option>
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input type="text" name="desc" placeholder="Description (optional)"></td>
+            <td><input type="text" name="pack_size" placeholder="20L / 25KG / Drum" required></td>
+            <td><input type="number" class="unit-price" name="unit_price[]" readonly></td>
+            <td><input type="number" class="discount" name="discount[]" value="0" min="0" max="100"></td>
+            <td><input type="number" class="final-price" name="final_price[]" readonly></td>
+            <td><input type="number" class="qty" name="qty[]" value="1" min="1"></td>
+            <td><input type="number" class="total" name="total[]" readonly></td>
+            <td><button type="button" class="btn" style="background:#ff4c4c;" onclick="removeRow(this)">X</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<button type="button" class="add-row-btn" onclick="addRow()">+ Add Product Row</button>
+
+<h3 style="color:#ffd700; margin-top:20px;">
+    Grand Total: <span id="grand-total">0.00</span> OMR
+</h3>
+
+
+
+<!-- TERMS -->
+<h2 class="section-title"><i class="ri-file-text-line"></i> Terms & Conditions</h2>
+
+<label>Offer Validity</label>
+<select name="validity" required>
+    <option>7 days</option>
+    <option>15 days</option>
+    <option>30 days</option>
+</select>
+
+<label>Delivery</label>
+<select name="delivery" required>
+    <option>Ex-Rusayl</option>
+    <option>Ex-Factory</option>
+    <option>Immediate</option>
+    <option>2–3 Days</option>
+</select>
+
+<label>Payment Terms</label>
+<select name="payment_terms" required>
+    <option>30 days LPO</option>
+    <option>45 days LPO</option>
+    <option>60 days LPO</option>
+</select>
+
+<label>Warranty</label>
+<select name="warranty" required>
+    <option>No warranty</option>
+    <option>3 months</option>
+    <option>6 months</option>
+    <option>1 year</option>
+</select>
+
+
+
+<!-- CLOSING TEXT -->
+<h2 class="section-title"><i class="ri-file-list-3-line"></i> Closing Paragraph</h2>
+
+<button type="button" class="btn blue-btn" onclick="openClosingModal()">+ Add Closing Text</button>
+
+<label>Select Closing Paragraph</label>
+<select id="closing-select">
+    <option value="">Select Closing</option>
+    {% for c in closing_texts %}
+    <option value="{{ c.text }}">{{ c.title }}</option>
+    {% endfor %}
+</select>
+
+<textarea id="closing-text" name="closing_text"></textarea>
+
+
+<!-- ACTION BUTTONS -->
+<div class="action-buttons">
+    <button type="button" class="btn" onclick="submitForm('preview')">
+        <i class="ri-eye-line"></i> Generate PDF
+    </button>
+
+    <button type="button" class="btn" style="background:gray;" onclick="submitForm('draft')">
+        <i class="ri-save-line"></i> Save Draft
+    </button>
+</div>
+
+</form>
+</div>
+
+
+
+
+<!-- HIDDEN PRODUCT OPTION TEMPLATE -->
+<select id="product-options-template" style="display:none;">
+    {% for p in products %}
+    <option value="{{ p.id }}" data-price="{{ p.unit_price }}">{{ p.name }}</option>
+    {% endfor %}
+</select>
+
+
+<!-- CLIENT MODAL -->
+<div id="clientModal" class="modal">
+    <div class="modal-content">
+        <h3>Add New Client</h3>
+
+        <label>Company Name</label>
+        <input type="text" id="new_client_name">
+
+        <label>Contact Person</label>
+        <input type="text" id="new_client_person">
+
+        <label>Email</label>
+        <input type="email" id="new_client_email">
+
+        <label>Phone</label>
+        <input type="text" id="new_client_phone">
+
+        <label>Address</label>
+        <textarea id="new_client_address"></textarea>
+
+        <button class="btn" onclick="saveNewClient()">Save Client</button>
+        <button class="btn" style="background:#ff4c4c" onclick="closeClientModal()">Cancel</button>
     </div>
-
-    <!-- PAGE LAYOUT -->
-    <div class="container">
-
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <h2>Menu</h2>
-            <a href="/sales-dashboard/">Dashboard</a>
-            <a href="/create-quotation/">Create Quotation</a>
-            <a href="/view-quotations/">View Quotations</a>
-            <a href="/logout/">Logout</a>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="main">
-            <h2>Quotation Details</h2>
-
-            <form method="POST">
-                {% csrf_token %}
-
-                <h3 style="color:#ffd700;">Client Details</h3>
-
-                <label>Client Name</label>
-                <input type="text" name="client_name" required>
-
-                <label>Company</label>
-                <input type="text" name="client_company" required>
-
-                <label>Email</label>
-                <input type="email" name="client_email" required>
-
-                <label>Phone</label>
-                <input type="text" name="client_phone" required>
+</div>
 
 
-                <h3 style="color:#ffd700;margin-top:25px;">Quotation Info</h3>
 
-                <label>Validity</label>
-                <input type="text" name="validity" list="validity_options" required>
-                <datalist id="validity_options">
-                    <option value="7 days">
-                    <option value="10 days">
-                    <option value="15 days">
-                    <option value="30 days">
-                    <option value="3 weeks">
-                    <option value="6 months">
-                    <option value="1 year">
-                </datalist>
+<!-- INTRO MODAL -->
+<div id="introModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Intro Text</h3>
 
-                <label>Delivery</label>
-                <input type="text" name="delivery" list="delivery_options" required>
-                <datalist id="delivery_options">
-                    <option value="Ex-Rusayl">
-                    <option value="Ex-Muscat">
-                    <option value="FOB Port">
-                </datalist>
+        <label>Title</label>
+        <input type="text" id="new_intro_title">
 
-                <label>Payment Terms</label>
-                <input type="text" name="payment_terms" list="payment_options" required>
-                <datalist id="payment_options">
-                    <option value="60 days LPO">
-                    <option value="30 days LPO">
-                    <option value="Advance Payment">
-                </datalist>
+        <label>Text</label>
+        <textarea id="new_intro_text"></textarea>
 
-                <label>Warranty</label>
-                <input type="text" name="warranty" list="warranty_options">
-                <datalist id="warranty_options">
-                    <option value="1 year">
-                    <option value="6 months">
-                    <option value="No warranty">
-                </datalist>
-
-                <h3 style="color:#ffd700;margin-top:25px;">Products</h3>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Pack Size</th>
-                            <th>Unit Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="products-body">
-                        <tr>
-                            <td><input type="text" name="product_name[]" required></td>
-                            <td><input type="text" name="pack_size[]" required></td>
-                            <td><input type="number" step="0.01" name="unit_price[]" required></td>
-                            <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <button type="button" onclick="addProductRow()" style="margin-top:10px;">Add Product</button>
-
-                <br><br>
-
-                <button type="submit" style="width:100%;font-size:16px;font-weight:bold;">
-                    Generate PDF Quotation
-                </button>
-
-            </form>
-        </div>
+        <button class="btn" onclick="saveNewIntro()">Save Intro</button>
+        <button class="btn" style="background:#ff4c4c" onclick="closeIntroModal()">Cancel</button>
     </div>
+</div>
+
+
+
+<!-- CLOSING MODAL -->
+<div id="closingModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Closing Text</h3>
+
+        <label>Title</label>
+        <input type="text" id="new_closing_title">
+
+        <label>Text</label>
+        <textarea id="new_closing_text"></textarea>
+
+        <button class="btn" onclick="saveNewClosing()">Save Closing</button>
+        <button class="btn" style="background:#ff4c4c" onclick="closeClosingModal()">Cancel</button>
+    </div>
+    <div style="margin-top:25px;">
+</div>
+</div>
+
+
+
+
+<!-- ====================================================================== -->
+<!-- ========================= JAVASCRIPT ================================= -->
+<!-- ====================================================================== -->
+
+<script>
+
+/* ------------------ CSRF ------------------ */
+function getCookie(name) {
+    let cookieValue = null;
+    document.cookie.split(';').forEach(cookie => {
+        if (cookie.trim().startsWith(name + '=')) {
+            cookieValue = cookie.trim().substring(name.length + 1);
+        }
+    });
+    return cookieValue;
+}
+const csrftoken = getCookie("csrftoken");
+
+
+/* ------------------ CLIENT AUTOFILL ------------------ */
+document.getElementById("client-select").addEventListener("change", function () {
+    let s = this.selectedOptions[0];
+    document.getElementById("client-person").value = s.dataset.contact || "";
+    document.getElementById("client-email").value = s.dataset.email || "";
+    document.getElementById("client-phone").value = s.dataset.phone || "";
+    document.getElementById("client-address").value = s.dataset.address || "";
+});
+
+
+
+/* ------------------ UPDATE PRODUCT ROW ------------------ */
+function updateRow(row) {
+    let productSelect = row.querySelector(".product-select");
+    let unitPrice = row.querySelector(".unit-price");
+    let discount = row.querySelector(".discount");
+    let finalPrice = row.querySelector(".final-price");
+    let qty = row.querySelector(".qty");
+    let total = row.querySelector(".total");
+    let descInput = row.querySelector("input[name='desc']");
+    let packInput = row.querySelector("input[name='pack_size']");
+
+    let opt = productSelect.selectedOptions[0];
+    if (!opt) return;
+
+    unitPrice.value = parseFloat(opt.dataset.price).toFixed(3);
+    descInput.value = opt.dataset.desc || "";
+    packInput.value = opt.dataset.pack || "";
+
+    let base = parseFloat(unitPrice.value);
+    let disc = parseFloat(discount.value) || 0;
+
+    finalPrice.value = (base - (base * disc / 100)).toFixed(3);
+    total.value = (finalPrice.value * qty.value).toFixed(3);
+
+    calculateGrandTotal();
+}
+
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("product-select") ||
+        e.target.classList.contains("qty") ||
+        e.target.classList.contains("discount")) {
+
+        updateRow(e.target.closest("tr"));
+    }
+});
+
+
+/* ------------------ GRAND TOTAL ------------------ */
+function calculateGrandTotal() {
+    let total = 0;
+    document.querySelectorAll(".total").forEach(t => total += parseFloat(t.value) || 0);
+    document.getElementById("grand-total").innerText = total.toFixed(3);
+}
+
+
+
+/* ------------------ ADD PRODUCT ROW ------------------ */
+function addRow() {
+    const firstRow = document.querySelector("#product-body tr");
+    const newRow = firstRow.cloneNode(true);
+
+    newRow.querySelector(".unit-price").value = "";
+    newRow.querySelector(".discount").value = 0;
+    newRow.querySelector(".final-price").value = "";
+    newRow.querySelector(".qty").value = 1;
+    newRow.querySelector(".total").value = "";
+
+    newRow.querySelector("input[name='desc']").value = "";
+    newRow.querySelector("input[name='pack_size']").value = "";
+
+    newRow.querySelector(".product-select").innerHTML =
+        document.getElementById("product-options-template").innerHTML;
+
+    document.querySelector("#product-body").appendChild(newRow);
+}
+
+
+
+/* ------------------ REMOVE ROW ------------------ */
+function removeRow(btn) {
+    let rows = document.querySelectorAll("#product-body tr");
+    if (rows.length > 1) {
+        btn.closest("tr").remove();
+        calculateGrandTotal();
+    }
+}
+
+
+
+/* ------------------ INTRO & CLOSING TEXT AUTOFILL ------------------ */
+document.getElementById("intro-select").addEventListener("change", function () {
+    document.getElementById("intro-text").value = this.value;
+});
+document.getElementById("closing-select").addEventListener("change", function () {
+    document.getElementById("closing-text").value = this.value;
+});
+
+
+
+/* ------------------ FORM SUBMIT ------------------ */
+function submitForm(actionType) {
+    document.getElementById("actionType").value = actionType;
+    document.getElementById("qtnForm").submit();
+}
+
+
+
+/* ------------------ MODAL FUNCTIONS ------------------ */
+
+/* CLIENT */
+function openClientModal() { document.getElementById("clientModal").style.display = "flex"; }
+function closeClientModal() { document.getElementById("clientModal").style.display = "none"; }
+
+function saveNewClient() {
+    let name = document.getElementById("new_client_name").value;
+    let person = document.getElementById("new_client_person").value;
+    let email = document.getElementById("new_client_email").value;
+    let phone = document.getElementById("new_client_phone").value;
+    let address = document.getElementById("new_client_address").value;
+
+    if (!name) return alert("Company name required");
+
+    let dropdown = document.getElementById("client-select");
+
+    let opt = document.createElement("option");
+    opt.value = "new-" + Date.now();
+    opt.textContent = name;
+    opt.dataset.contact = person;
+    opt.dataset.email = email;
+    opt.dataset.phone = phone;
+    opt.dataset.address = address;
+
+    dropdown.appendChild(opt);
+    dropdown.value = opt.value;
+
+    document.getElementById("client-person").value = person;
+    document.getElementById("client-email").value = email;
+    document.getElementById("client-phone").value = phone;
+    document.getElementById("client-address").value = address;
+
+    closeClientModal();
+}
+
+
+/* INTRO */
+function openIntroModal() { document.getElementById("introModal").style.display = "flex"; }
+function closeIntroModal() { document.getElementById("introModal").style.display = "none"; }
+
+function saveNewIntro() {
+    let title = document.getElementById("new_intro_title").value;
+    let text = document.getElementById("new_intro_text").value;
+
+    if (!title || !text) return alert("Both fields required");
+
+    let dropdown = document.getElementById("intro-select");
+
+    let opt = document.createElement("option");
+    opt.value = text;
+    opt.textContent = title;
+
+    dropdown.appendChild(opt);
+    dropdown.value = opt.value;
+
+    document.getElementById("intro-text").value = text;
+
+    closeIntroModal();
+}
+
+
+/* CLOSING */
+function openClosingModal() { document.getElementById("closingModal").style.display = "flex"; }
+function closeClosingModal() { document.getElementById("closingModal").style.display = "none"; }
+
+function saveNewClosing() {
+    let title = document.getElementById("new_closing_title").value;
+    let text = document.getElementById("new_closing_text").value;
+
+    if (!title || !text) return alert("Both fields required");
+
+    let dropdown = document.getElementById("closing-select");
+
+    let opt = document.createElement("option");
+    opt.value = text;
+    opt.textContent = title;
+
+    dropdown.appendChild(opt);
+    dropdown.value = opt.value;
+
+    document.getElementById("closing-text").value = text;
+
+    closeClosingModal();
+}
+
+</script>
 
 </body>
 </html>

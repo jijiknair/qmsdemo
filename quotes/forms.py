@@ -30,15 +30,13 @@ WARRANTY_CHOICES = ['None','6 months','1 year','2 years']
 SHIPPING_CHOICES = ['Standard','Express','Air','Sea']
 
 class QuotationForm(forms.ModelForm):
-    validity = forms.CharField(widget=forms.TextInput(attrs={'list':'validity_options'}))
-    delivery = forms.CharField(widget=forms.TextInput(attrs={'list':'delivery_options'}))
-    warranty = forms.CharField(widget=forms.TextInput(attrs={'list':'warranty_options'}), required=False)
-    shipping = forms.CharField(widget=forms.TextInput(attrs={'list':'shipping_options'}), required=False)
 
     class Meta:
         model = Quotation
         fields = [
-            'client_name','client_company','client_email','client_phone',
-            'valid_until','payment_terms','salesperson','products','total_amount',
-            'validity','delivery','warranty','shipping'
+            'client',
+            'intro_text',
+            'closing_text',
+            'terms_text',
+            'valid_until',
         ]

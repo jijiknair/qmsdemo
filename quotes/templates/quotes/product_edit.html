@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Product</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
+      color: #fff;
+    }
+    .main-box {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      width: 60%;
+      margin: 40px auto;
+      padding: 25px;
+      border-radius: 15px;
+    }
+    h2 {
+      color: #ffd700;
+      margin-bottom: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: none;
+    }
+    .btn {
+      background: #ffd700;
+      color: #000;
+      padding: 10px 15px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .btn:hover {
+      background: #e6c300;
+    }
+  </style>
+</head>
+<body>
+<div class="main-box">
+  <h2>Edit Product</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <label>Product Name</label>
+    <input type="text" name="name" value="{{ product.name }}" required>
+    
+    <label>Description</label>
+    <textarea name="description">{{ product.description }}</textarea>
+    
+    <label>Unit Price</label>
+    <input type="number" step="0.01" name="unit_price" value="{{ product.unit_price }}" required>
+    
+    <label>VAT Percentage</label>
+    <input type="number" step="0.01" name="vat_percentage" value="{{ product.vat_percentage }}">
+
+    <label>Unit</label>
+    <input type="text" name="unit" value="{{ product.unit }}" placeholder="e.g., ltr, kg, pcs">
+    
+    <button type="submit" class="btn">Update</button>
+  </form>
+  <br>
+  <a href="{% url 'product_list' %}" class="btn">← Back to Product List</a>
+</div>
+</body>
+</html>

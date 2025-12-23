@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Quotations</title>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 20px;
+        background-color: #0d1117; /* dashboard background */
+        color: #fff;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .page-title {
+        font-size: 26px;
+        font-weight: 600;
+        color: #ffcc00; /* same yellow */
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card {
+        background: #161b22;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    table th {
+        padding: 12px;
+        background: #1f242c;
+        color: #ffcc00; /* yellow */
+        font-size: 14px;
+        text-align: left;
+    }
+
+    table td {
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        font-size: 14px;
+        color: #fff;
+    }
+
+    tr:hover {
+        background: rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .status-draft { background: #444; color: #ccc; }
+    .status-sent { background: #0066ff; color: #fff; }
+    .status-approved { background: #009900; color: #fff; }
+    .status-rejected { background: #cc0000; color: #fff; }
+
+    .action-btn {
+        color: #00c8ff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .action-btn:hover {
+        text-decoration: underline;
+    }
+
+</style>
+</head>
+
+<body>
+<h2>
+{% if request.user.role == 'salesmanager' %}
+    All Quotations
+{% elif request.user.role == 'admin' %}
+    All Quotations
+{% else %}
+    My Quotations
+{% endif %}
+</h2>
+<a href="{% if request.user.role == 'admin' %}
+             {% url 'admin_dashboard' %}
+         {% elif request.user.role == 'salesmanager' %}
+             {% url 'salesmanager_dashboard' %}
+         {% else %}
+             {% url 'salesperson_dashboard' %}
+         {% endif %}"
+   style="display:inline-block; background:#ffcc00; color:#000; padding:8px 16px;
+          border-radius:6px; text-decoration:none; font-weight:600; margin-bottom:15px;">
+    <i class="ri-arrow-left-line"></i> Back to Dashboard
+</a>
+<div class="card">
+
+    {% if quotations %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Total (RO)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for q in quotations %}
+            <tr>
+                <td>{{ q.id }}</td>
+                <td>{{ q.client }}</td>
+                <td>{{ q.date_created }}</td>
+
+            
+
+                <td>{{ q.total_amount }}</td>
+                <!-- ACTION COLUMN -->
+    <td>
+
+<!-- SALESPERSON -->
+{% if request.user.role == 'salesperson' %}
+
+    {% if q.status == 'draft' %}
+        <a href="{% url 'send_for_approval' q.id %}" class="action-btn">
+            <i class="ri-send-plane-line"></i> Send
+        </a>
+
+    {% elif q.status == 'sent' %}
+        <span style="color:#ffcc00;">Waiting Approval</span>
+
+    {% elif q.status == 'approved' %}
+        <span style="color:#00ff88;">Approved</span>
+
+    {% elif q.status == 'rejected' %}
+        <span style="color:#ff4c4c;">Rejected</span>
+    {% endif %}
+
+<!-- SALES MANAGER -->
+{% elif request.user.role == 'salesmanager' %}
+
+    {% if q.status == 'sent' %}
+        <a href="{% url 'approve_quotation' q.id %}" class="action-btn" style="color:#00ff88;">
+            <i class="ri-check-line"></i> Approve
+        </a>
+        |
+        <a href="{% url 'reject_quotation' q.id %}" class="action-btn" style="color:#ff4c4c;">
+            <i class="ri-close-line"></i> Reject
+        </a>
+
+    {% else %}
+        <span style="color:#999;">—</span>
+    {% endif %}
+
+<!-- ADMIN (VIEW ONLY) -->
+{% elif request.user.role == 'admin' %}
+
+    <a href="#" class="action-btn">
+        <i class="ri-eye-line"></i> View
+    </a>
+
+{% endif %}
+
+</td>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+        <p>No quotations found.</p>
+    {% endif %}
+
+</div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QMS | Sales Manager Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #0d1326;
+            color: white;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffd700;
+        }
+
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-area img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd700;
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            height: calc(100vh - 70px);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: #0a1020;
+            padding: 25px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .side-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        /* CARDS */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 16px;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* TABLE */
+       /* TABLE */
+         table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;   /* ⭐ IMPORTANT */
+                }
+
+        th, td {
+                padding: 16px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;      /* prevents jumping */
+                }
+
+            th {
+            background: rgba(255,255,255,0.15);
+            color: #ffd700;
+            font-weight: 600;
+            }
+
+            td {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+            }
+      
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-title">QMS — Sales Manager Dashboard</div>
+
+        <div class="profile-area">
+            <img src="{% static 'quotes/user.png' %}">
+            <span>Welcome, {{ request.user.username }}</span><br>
+            <a href="{% url 'logout' %}" style="color:#ffd700;">Logout</a>
+        </div>
+    </div>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h2>Menu</h2>
+
+            <a class="side-link" href="#"><i class="ri-dashboard-line"></i> Dashboard</a>
+
+            <a class="side-link" href="{% url 'salesperson_list' %}">
+                <i class="ri-team-line"></i> Sales Team
+            </a>
+
+            <a class="side-link" href="{% url 'all_quotations' %}">
+                    <i class="ri-file-list-3-line"></i> All Quotations
+            </a>
+
+            <a class="side-link" href="{% url 'client_management' %}"><i class="ri-user-3-line"></i> My Clients</a>
+        <a class="side-link" href="{% url 'product_list' %}"><i class="ri-archive-line"></i> Products (View Only)</a>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <h2 class="section-title">📊 Overall Performance Summary</h2>
+
+            <div class="card-grid">
+                            <div class="card">
+                <h4>Total Quotations</h4>
+                <h1>{{ total_quotations }}</h1>
+            </div>
+
+            <div class="card">
+                <h4>Pending Approval</h4>
+                <h1>{{ pending_approval }}</h1>
+            </div>
+
+            <div class="card">
+                <h4>Approved</h4>
+                <h1>{{ approved_count }}</h1>
+            </div>
+
+            <div class="card">
+                <h4>Total Salespersons</h4>
+                <h1>{{ total_salespersons }}</h1>
+            </div>
+                        
+            </div>
+            <h2 class="section-title">📈 Sales Insights</h2>
+
+<div class="card-grid">
+
+    <!-- GRAPH 1: Salesperson vs Quotations -->
+    <div class="card">
+        <h3>Salesperson vs Quotations</h3>
+        <canvas id="salespersonChart" height="200"></canvas>
+    </div>
+
+    <!-- GRAPH 2: Status Distribution -->
+    <div class="card">
+        <h3>Quotation Status Distribution</h3>
+        <canvas id="statusChart" height="200"></canvas>
+    </div>
+
+</div>
+            <h2 class="section-title">📝 Recent Quotations</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Salesperson</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+            <tbody>
+            {% for q in recent_quotations %}
+            <tr>
+                <td>{{ q.id }}</td>
+                <td>{{ q.client }}</td>
+                <td>{{ q.salesperson }}</td>
+                <td>{{ q.status }}</td>
+                <td>{{ q.date_created|date:"M d, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No recent quotations</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+            </table>
+
+        </div>
+    </div>
+<!-- ✅ PASTE SCRIPT HERE -->
+<script>
+const salespersonCtx = document.getElementById('salespersonChart').getContext('2d');
+
+new Chart(salespersonCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ salesperson_labels|safe }},
+        datasets: [{
+            label: 'Quotations Created',
+            data: {{ salesperson_totals|safe }},
+            backgroundColor: '#ffd700'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#ffffff' }
+            },
+            x: {
+                ticks: { color: '#ffffff' }
+            }
+        }
+    }
+});
+</script>
+
+<script>
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ status_labels|safe }},
+        datasets: [{
+            data: {{ status_totals|safe }},
+            backgroundColor: [
+                '#6c757d',
+                '#0dcaf0',
+                '#28a745',
+                '#dc3545'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#ffffff' }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

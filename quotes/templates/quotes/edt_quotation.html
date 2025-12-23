@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quotation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 6px;
+        }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-danger {
+            background: red;
+            color: white;
+        }
+        .add-btn {
+            margin-top: 10px;
+            background: green;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h2>Edit Quotation</h2>
+    <p>Editing Quotation #{{ quotation.id }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label><b>Client Name:</b></label>
+        <input type="text" name="client_name" value="{{ quotation.client_name }}" required>
+
+        <br><br>
+
+        <label><b>Description:</b></label>
+        <textarea name="description">{{ quotation.description }}</textarea>
+
+        <br><br>
+
+        <h3>Products</h3>
+
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><input type="text" name="product_name[]" value="{{ item.product_name }}" required></td>
+                    <td><input type="number" name="quantity[]" value="{{ item.quantity }}" min="1" class="qty" required></td>
+                    <td><input type="number" name="unit_price[]" value="{{ item.unit_price }}" step="0.01" class="price" required></td>
+                    <td><input type="number" name="total[]" value="{{ item.total }}" class="total" readonly></td>
+                    <td><button type="button" class="btn-danger" onclick="removeRow(this)">X</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" class="add-btn" onclick="addProductRow()">+ Add Product</button>
+
+        <br><br>
+
+        <button type="submit" name="action" value="update" class="btn-primary">Update Quotation</button>
+        <button type="submit" name="action" value="draft" class="btn-secondary">Save as Draft</button>
+
+    </form>
+</div>
+
+<script>
+function addProductRow() {
+    let table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+    let newRow = `
+        <tr>
+            <td><input type="text" name="product_name[]" required></td>
+            <td><input type="number" name="quantity[]" class="qty" min="1" required></td>
+            <td><input type="number" name="unit_price[]" class="price" step="0.01" required></td>
+            <td><input type="number" name="total[]" class="total" readonly></td>
+            <td><button type="button" class="btn-danger" onclick="removeRow(this)">X</button></td>
+        </tr>`;
+    table.insertAdjacentHTML("beforeend", newRow);
+}
+
+function removeRow(btn) {
+    btn.closest("tr").remove();
+}
+</script>
+
+</body>
+</html>

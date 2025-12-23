@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Clients</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 20px;
+        background-color: #0d1326;
+        color: #fff;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .page-title {
+        font-size: 26px;
+        font-weight: 600;
+        color: #ffd700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.05);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    table th {
+        padding: 12px;
+        background: #1f242c;
+        color: #ffd700;
+        text-align: left;
+        font-size: 15px;
+    }
+
+    table td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    tr:hover {
+        background: rgba(255,255,255,0.1);
+    }
+
+    .back-btn {
+        display: inline-block;
+        background: #ffd700;
+        color: #000;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: #1f242c;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    color: white;
+    border: 1px solid #ffd700;
+}
+.modal-content input, 
+.modal-content textarea {
+    width: 100%;
+    display: block;
+    margin-bottom: 12px;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<a href="{% url 'salesperson_dashboard' %}" class="back-btn">
+    <i class="ri-arrow-left-line"></i> Back to Dashboard
+</a>
+<a href="#" class="back-btn" 
+   style="background:#00eaff; color:#000; margin-right:10px; text-decoration:none;"
+   onclick="openClientModal()">
+    <i class="ri-user-add-line"></i> Add Client
+</a>
+
+<h2 class="page-title"><i class="ri-user-3-line"></i> My Clients</h2>
+
+<div class="card">
+    {% if clients %}
+    <table>
+        <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Company</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for c in clients %}
+            <tr>
+                <td>{{ c.contact_person }}</td>
+                <td>{{ c.company_name }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.phone }}</td>
+
+                <td>
+                    <a href="#"
+                        style="color:#00eaff; text-decoration:none; margin-right:10px;"
+                        onclick="editClient(this)">
+                            <i class="ri-edit-2-line"></i> Edit
+                    </a>
+
+
+                    <a href="#"
+                       style="color:#ff4d4d; text-decoration:none;"
+                       onclick="return confirm('Are you sure you want to delete this client?');">
+                        <i class="ri-delete-bin-line"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+    {% else %}
+        <p>No clients found.</p>
+    {% endif %}
+<!-- ADD CLIENT MODAL -->
+<div id="clientModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:#ffd700;">Add New Client</h3>
+
+        <label>Company Name</label>
+        <input type="text" id="new_company" required>
+
+        <label>Contact Person</label>
+        <input type="text" id="new_contact" required>
+
+        <label>Email</label>
+        <input type="email" id="new_email"
+               required
+               pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(om|com|net|org)$">
+
+        <label>Phone</label>
+        <input type="text" id="new_phone" required pattern="[0-9]+" maxlength="15">
+
+        <label>Address</label>
+        <textarea id="new_address"></textarea>
+
+        <button class="back-btn" onclick="saveNewClient()">Save</button>
+        <button class="back-btn" onclick="closeClientModal()" style="background:#ff4d4d;">Cancel</button>
+    </div>
+</div>
+
+
+<!-- EDIT CLIENT MODAL -->
+<div id="editClientModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:#ffd700;">Edit Client</h3>
+
+        <label>Company Name</label>
+        <input type="text" id="edit_company">
+
+        <label>Contact Person</label>
+        <input type="text" id="edit_contact">
+
+        <label>Email</label>
+        <input type="email" id="edit_email">
+
+        <label>Phone</label>
+        <input type="text" id="edit_phone">
+
+        <label>Address</label>
+        <textarea id="edit_address"></textarea>
+
+        <button class="back-btn" onclick="saveEditedClient()">Save Changes</button>
+        <button class="back-btn" onclick="closeEditModal()" style="background:#ff4d4d;">Cancel</button>
+    </div>
+</div>
+
+    
+
+
+    
+</div>
+</div>
+<script>
+function openClientModal() {
+    document.getElementById("clientModal").style.display = "flex";
+}
+
+function closeClientModal() {
+    document.getElementById("clientModal").style.display = "none";
+}
+
+function saveNewClient() {
+    let company = new_company.value;
+    let person  = new_contact.value;
+    let email   = new_email.value;
+    let phone   = new_phone.value;
+    let address = new_address.value;
+
+    fetch("{% url 'add_client_ajax' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({
+            company_name: company,
+            contact_person: person,
+            email: email,
+            phone: phone,
+            address: address
+        }),
+    })
+    .then(res => res.json())
+    .then(result => {
+
+        if (result.status === "success") {
+            let tbody = document.querySelector("table tbody");
+
+            tbody.innerHTML += `
+            <tr data-id="${result.client.id}">
+                <td>${result.client.contact_person}</td>
+                <td>${result.client.company_name}</td>
+                <td>${result.client.email}</td>
+                <td>${result.client.phone}</td>
+                <td>
+                    <a href="#" onclick="editClient(this)" style="color:#00eaff;">Edit</a>
+                    <a href="#" onclick="deleteClient(${result.client.id}, this)" style="color:#ff4d4d;">Delete</a>
+                </td>
+            </tr>`;
+
+            closeClientModal();
+        }
+    });
+}
+
+
+function saveEditedClient() {
+
+    let id = currentRow.getAttribute("data-id");
+
+    let company = edit_company.value;
+    let contact = edit_contact.value;
+    let email   = edit_email.value;
+    let phone   = edit_phone.value;
+    let address = edit_address.value;
+
+    fetch(`/clients/edit/${id}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: JSON.stringify({
+            company_name: company,
+            contact_person: contact,
+            email: email,
+            phone: phone,
+            address: address
+        }),
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.status === "success") {
+
+            currentRow.children[0].innerText = contact;
+            currentRow.children[1].innerText = company;
+            currentRow.children[2].innerText = email;
+            currentRow.children[3].innerText = phone;
+
+            closeEditModal();
+        }
+    });
+}
+function deleteClient(id, button) {
+
+    if (!confirm("Are you sure you want to delete this client?")) return;
+
+    fetch(`/clients/delete/${id}/`, {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        }
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.status === "success") {
+            button.closest("tr").remove();
+        }
+    });
+}
+
+
+
+</script>
+
+</body>
+</html>

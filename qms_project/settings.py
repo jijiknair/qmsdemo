@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-998ca2kr0ru=4(s*-2*1+4%1vv=acjrv_za08(qexmm1wejs)0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'qmsdemo.loca.lt']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'qms_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'qmspjt',
+        'NAME': 'qmsdb2',
         'USER': 'qms_usernew',
         'PASSWORD': 'qmspjtoman!',
         'HOST': 'localhost',
@@ -120,6 +120,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",   # your development static folder
+]
+STATIC_ROOT = BASE_DIR / "staticfiles" 
 
 
 # Default primary key field type

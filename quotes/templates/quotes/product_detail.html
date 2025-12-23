@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product Details</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        padding: 30px;
+        font-family: "Poppins", sans-serif;
+        background: #0d1326;
+        color: white;
+    }
+
+    .card {
+        max-width: 600px;
+        margin: auto;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 14px;
+        padding: 30px;
+    }
+
+    h2 {
+        color: #ffd700;
+        margin-bottom: 20px;
+    }
+
+    .field {
+        margin-bottom: 15px;
+    }
+
+    .label {
+        color: #ffd700;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .value {
+        font-size: 15px;
+    }
+
+    .back-btn {
+        display: inline-block;
+        margin-bottom: 20px;
+        background: #00eaff;
+        color: black;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+</head>
+
+<body>
+
+<a href="{% url 'product_list' %}" class="back-btn">
+    ← Back to Products
+</a>
+
+<div class="card">
+    <h2><i class="ri-archive-line"></i> {{ product.name }}</h2>
+
+    <div class="field">
+        <div class="label">Description</div>
+        <div class="value">{{ product.description|default:"—" }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">Unit Price</div>
+        <div class="value">{{ product.unit_price }} OMR</div>
+    </div>
+
+    <div class="field">
+        <div class="label">Unit</div>
+        <div class="value">{{ product.unit }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">Pack Size</div>
+        <div class="value">{{ product.pack_size|default:"—" }}</div>
+    </div>
+
+    <div class="field">
+        <div class="label">Country</div>
+        <div class="value">{{ product.country }}</div>
+    </div>
+</div>
+
+</body>
+</html>

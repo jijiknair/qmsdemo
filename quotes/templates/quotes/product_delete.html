@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Delete Product</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
+        color: #fff;
+    }
+
+    .main-box {
+        width: 40%;
+        margin: 80px auto;
+        background: rgba(255,255,255,0.1);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        backdrop-filter: blur(15px);
+    }
+
+    h2 {
+        color: #ff4d4d;
+    }
+
+    button {
+        background: #ff4d4d;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #fff;
+        font-weight: bold;
+        margin: 10px;
+    }
+
+    a {
+        color: #ffd700;
+        text-decoration: none;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="main-box">
+    <h2>Delete Product</h2>
+    <p>Are you sure you want to delete <strong>{{ product.name }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+    </form>
+
+    <a href="{% url 'product_list' %}">Cancel</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QMS | All Quotations</title>
+
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: #0d1326;
+        color: white;
+        font-family: "Poppins", sans-serif;
+        padding: 30px;
+    }
+
+    h2 {
+        color: #ffd700;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    /* CARD GRID */
+    .card-row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        flex: 1;
+        min-width: 220px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.15);
+        padding: 18px;
+        border-radius: 12px;
+        transition: 0.3s;
+        text-align: center;
+    }
+    .stat-card:hover {
+        background: rgba(255,255,255,0.12);
+        transform: translateY(-4px);
+    }
+
+    .stat-card h4 {
+        font-size: 15px;
+        color: #ffd700;
+        margin-bottom: 6px;
+    }
+
+    .stat-card p {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* FILTER FORM */
+    .filters {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+    }
+
+    .filters input,
+    .filters select {
+        background: #141a33;
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px;
+        color: white;
+        border-radius: 8px;
+        width: 240px;
+    }
+
+    .filters button {
+        background: #ffd700;
+        border: none;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255,255,255,0.05);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 20px;
+    }
+
+    th {
+        background: #1a1f33;
+        color: #ffd700;
+        font-weight: 600;
+        padding: 14px;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    td {
+        padding: 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 14px;
+    }
+
+    tr:hover {
+        background: rgba(255,255,255,0.08);
+    }
+
+    /* BADGES */
+    .badge {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .badge-draft { background: #6c757d; }
+    .badge-sent { background: #28a745; }
+
+    /* ACTION BUTTONS */
+    .action-btn {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-right: 6px;
+        display: inline-block;
+    }
+    .btn-view { background: #00eaff; color: black; }
+    .btn-edit { background: #ffd700; color: black; }
+    .btn-delete { background: #ff4d4d; color: white; }
+</style>
+</head>
+
+<body>
+
+<h2>📝 All Quotations</h2>
+
+<!-- STAT CARDS -->
+<div class="card-row">
+    <div class="stat-card">
+        <h4>Total Quotations</h4>
+        <p>{{ quotations.count }}</p>
+    </div>
+    <div class="stat-card">
+        <h4>Draft</h4>
+        <p>{{ draft_count }}</p>
+    </div>
+    <div class="stat-card">
+        <h4>Sent</h4>
+        <p>{{ sent_count }}</p>
+    </div>
+    <div class="stat-card">
+        <h4>Total Value (OMR)</h4>
+        <p>{{ total_value }}</p>
+    </div>
+</div>
+
+<!-- FILTERS -->
+<form method="GET" class="filters">
+
+    <input type="text" name="search" value="{{ search_query }}"
+           placeholder="Search by client, company, phone...">
+
+    <select name="status">
+        <option value="">All Status</option>
+        <option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>Draft</option>
+        <option value="sent" {% if status_filter == 'sent' %}selected{% endif %}>Sent</option>
+    </select>
+
+    <select name="salesperson">
+        <option value="">All Salespersons</option>
+        {% for user in salespersons %}
+        <option value="{{ user.username }}" {% if salesperson_filter == user.username %}selected{% endif %}>
+            {{ user.username }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<!-- TABLE -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Company</th>
+            <th>Salesperson</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Total (OMR)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for q in quotations %}
+        <tr>
+            <td>{{ q.id }}</td>
+            <td>{{ q.client}}</td>
+            <td>{{ q.client.contact_person }}</td>
+            <td>{{ q.salesperson }}</td>
+            <td>{{ q.date_created }}</td>
+
+            <td>
+                {% if q.status == 'draft' %}
+                <span class="badge badge-draft">Draft</span>
+                {% else %}
+                <span class="badge badge-sent">Sent</span>
+                {% endif %}
+            </td>
+
+            <td>{{ q.total_amount }}</td>
+
+            <td>
+                <a href="#" class="action-btn btn-view">View</a>
+                <a href="#" class="action-btn btn-edit">Edit</a>
+                <a href="#" class="action-btn btn-delete"
+                   onclick="return confirm('Delete this quotation?');">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" style="text-align:center; padding:20px;">No quotations found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

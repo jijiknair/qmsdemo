@@ -1,422 +1,292 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QMS SYSTEM | Salesperson Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QMS | Salesperson Dashboard</title>
 
-  <!-- Remix Icon for modern icons -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    /* ===== General Page Styling ===== */
-    body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: radial-gradient(circle at 30% 50%, #1f1c2c, #928dab);
-      color: #fff;
-      overflow-x: hidden;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background: #0d1326;
+            color: white;
+        }
 
-    /* ===== Navbar ===== */
-    .navbar {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  z-index: 10;
-}
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-.navbar h1 {
-  flex: 1;
-  text-align: center;
-  font-size: 22px;
-  letter-spacing: 1px;
-  color: #fff;
-  margin: 0;
-}
+        .navbar-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffd700;
+        }
 
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.profile-icon {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ffd700;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
+        .profile-area img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ffd700;
+        }
 
-.profile-icon:hover {
-  transform: scale(1.1);
-}
+        /* LAYOUT */
+        .layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            height: calc(100vh - 70px);
+        }
 
-.welcome {
-  color: #fff;
-  font-weight: 500;
-  font-size: 14px;
-}
+        /* SIDEBAR */
+        .sidebar {
+            background: #0a1020;
+            padding: 25px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-.nav-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
+        .sidebar h2 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
 
-.nav-item {
-  color: #ffd700;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
 
-.nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-}
-    .user-info {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
+        .side-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+        }
 
-    .user-info img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #ffd700;
-    }
+        /* MAIN */
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
 
-    .user-menu {
-      display: none;
-      position: absolute;
-      top: 55px;
-      right: 0;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 10px;
-      overflow: hidden;
-      min-width: 150px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    }
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
 
-    .user-info:hover .user-menu {
-      display: block;
-    }
+        /* CARDS */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
 
-    .user-menu a {
-      display: block;
-      color: #fff;
-      padding: 10px 15px;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+            transition: 0.3s;
+        }
 
-    .user-menu a:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+        .card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
 
-    /* ===== Layout ===== */
-    .container {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 25px;
-      padding: 25px;
-    }
+        .card h3 {
+            font-size: 16px;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
 
-    @media (max-width: 900px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .sidebar {
-        order: 2;
-      }
-    }
+        .card p {
+            font-size: 32px;
+            font-weight: 700;
+        }
 
-    /* ===== Sidebar ===== */
-    .sidebar {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      border-radius: 15px;
-      padding: 20px;
-    }
+        /* TABLE */
+         table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;   /* ⭐ IMPORTANT */
+                }
 
-    .sidebar h2 {
-      font-size: 18px;
-      margin-bottom: 20px;
-      text-align: center;
-      color: #ffd700;
-    }
+        th, td {
+                padding: 16px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;      /* prevents jumping */
+                }
 
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #fff;
-      text-decoration: none;
-      margin: 12px 0;
-      padding: 10px;
-      border-radius: 8px;
-      transition: background 0.3s, transform 0.2s;
-    }
+            th {
+            background: rgba(255,255,255,0.15);
+            color: #ffd700;
+            font-weight: 600;
+            }
 
-    .sidebar a:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateX(5px);
-    }
-
-    /* ===== Main Section ===== */
-    .main {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-      min-height: 600px;
-    }
-
-    .main h2 {
-      margin-bottom: 15px;
-      color: #ffd700;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding-bottom: 8px;
-    }
-
-    /* ===== Dashboard Cards ===== */
-    .card-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 15px;
-      text-align: center;
-      padding: 25px;
-      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      background: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
-    }
-
-    .card h3 {
-      color: #ffd700;
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      font-size: 24px;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    /* ===== Tables ===== */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    th {
-      color: #ffd700;
-    }
-
-    td {
-      color: #fff;
-    }
-
-    a.table-link {
-      color: #ffd700;
-      text-decoration: none;
-      margin-right: 10px;
-    }
-
-    a.table-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-
+            td {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+            }
+    </style>
 </head>
+
 <body>
- <!-- Navbar -->
+
+<!-- NAVBAR -->
 <div class="navbar">
-  <div class="profile-section">
-    <img src="{% static 'quotes/user.png' %}" alt="Profile" class="profile-icon">
-    <span class="welcome">Welcome, {{ request.user.username }}</span>
-  </div>
-  <h1>QMS SYSTEM | Salesperson Dashboard</h1>
-  <div class="nav-links">
-    <a href="{% url 'logout' %}" class="nav-item">Logout</a>
-  </div>
+    <div class="navbar-title">QMS — Salesperson Dashboard</div>
+    <div class="profile-area">
+        <img src="{% static 'quotes/user.png' %}">
+        <span>{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" style="color:#ffd700;">Logout</a>
+    </div>
 </div>
-  </div>
 
-  <div class="container">
-    <!-- Sidebar -->
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
     <div class="sidebar">
-      <h2>Menu</h2>
-      <a href="#"><i class="ri-dashboard-line"></i> Dashboard</a>
-      <a href="{% url 'create_quotation' %}"><i class="ri-file-add-line"></i> Create Quotation</a>
-      <a href="#"><i class="ri-user-3-line"></i> Clients</a>
-      <a href="#"><i class="ri-archive-line"></i> Products</a>
-      <a href="#"><i class="ri-draft-line"></i> Drafts</a>
-      <a href="#"><i class="ri-send-plane-line"></i> Sent Quotations</a>
-      <a href="#"><i class="ri-bar-chart-line"></i> Analytics</a>
+        <h2>Menu</h2>
+        <a class="side-link" href="#"><i class="ri-dashboard-line"></i> Dashboard</a>
+        <a class="side-link" href="{% url 'create_quotation' %}"><i class="ri-file-add-line"></i> Create Quotation</a>
+        <a class="side-link" href="{% url 'my_quotations' %}"><i class="ri-file-list-2-line"></i> My Quotations</a>
+        <a class="side-link" href="{% url 'client_management' %}"><i class="ri-user-3-line"></i> My Clients</a>
+        <a class="side-link" href="{% url 'product_list' %}"><i class="ri-archive-line"></i> Products (View Only)</a>
     </div>
 
-    <!-- Main Content -->
-    <div class="main">
-      <h2>Dashboard Overview</h2>
-      <div class="card-container">
-        <div class="card">
-          <h3>Total Quotations</h3>
-          <p class="count" data-value="{{ total_quotations }}">0</p>
-        </div>
-        <div class="card">
-          <h3>Pending Approvals</h3>
-          <p class="count" data-value="{{ pending_approvals }}">0</p>
-        </div>
-        <div class="card">
-          <h3>Sent Quotations</h3>
-          <p class="count" data-value="{{ sent_quotations }}">0</p>
-        </div>
-        <div class="card">
-          <h3>Accepted Quotations</h3>
-          <p class="count" data-value="{{ accepted_quotations }}">0</p>
-        </div>
-      </div>
+    <!-- MAIN -->
+    <div class="main-content">
 
-      <h2>Recent Quotations</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Client</th>
-            <th>Quotation ID</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for quotation in recent_quotations %}
-          <tr>
-            <td>{{ quotation.client_name }}</td>
-            <td>{{ quotation.id }}</td>
-            <td>{{ quotation.status }}</td>
-            <td>{{ quotation.date_created }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="4">No recent quotations</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <!-- KPI SECTION -->
+        <h2 class="section-title">📊 Sales Overview (2025)</h2>
 
-      <h2>Clients</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for client in clients %}
-          <tr>
-            <td>{{ client.name }}</td>
-            <td>{{ client.email }}</td>
-            <td>{{ client.phone }}</td>
-            <td>
-              <a href="{% url 'view_client' client.id %}" class="table-link">View</a>
-              <a href="{% url 'edit_client' client.id %}" class="table-link">Edit</a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="4">No clients available</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <div class="card-grid">
+            <div class="card">
+                <h3>Total Quotations</h3>
+                <p>{{ total_quotations }}</p>
+            </div>
+            <div class="card">
+                <h3>Sent Quotations</h3>
+                <p>{{ sent_quotations }}</p>
+            </div>
+            <div class="card">
+                <h3>Approved Quotations</h3>
+                <p>{{ approved_quotations }}</p>
+            </div>
+        </div>
 
-      <h2>Products</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>SKU</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for product in products %}
-          <tr>
-            <td>{{ product.name }}</td>
-            <td>{{ product.sku }}</td>
-            <td>{{ product.price }}</td>
-            <td>
-              <a href="{% url 'view_product' product.id %}" class="table-link">View</a>
-              <a href="{% url 'edit_product' product.id %}" class="table-link">Edit</a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="4">No products available</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <!-- CHARTS -->
+        <h2 class="section-title">📈 Performance Analytics</h2>
+
+        <div class="card-grid">
+            <div class="card" style="grid-column: span 2;">
+                <h3>Monthly Quotations Trend</h3>
+                <canvas id="quotationTrend"></canvas>
+            </div>
+
+            <div class="card">
+                <h3>Quotation Status</h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <h2 class="section-title">📝 Recent Quotations</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in recent_quotations %}
+                <tr>
+                <td>
+                    {% if q.client %}
+                    {{ q.client.contact_person }}
+                    {% else %}
+                    <span class="muted-text">—</span>
+                    {% endif %}
+                </td>
+                <td>{{ q.id }}</td>
+                <td>{{ q.status }}</td>
+                <td>{{ q.date_created|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No recent quotations</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     </div>
-  </div>
+</div>
 
-  <!-- Animated Counter Script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".count").forEach((el) => {
-        const end = parseInt(el.dataset.value || "0");
-        let current = 0;
-        const step = Math.ceil(end / 60);
-        const timer = setInterval(() => {
-          current += step;
-          if (current >= end) {
-            current = end;
-            clearInterval(timer);
-          }
-          el.textContent = current;
-        }, 30);
-      });
-    });
-  </script>
+<!-- CHART JS -->
+<script>
+new Chart(document.getElementById('quotationTrend'), {
+    type: 'line',
+    data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+            data: {{ monthly_data|safe }},
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Approved','Sent','Draft'],
+        datasets: [{
+            data: {{ status_data|safe }}
+        }]
+    },
+    options: {
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+</script>
+
 </body>
 </html>
