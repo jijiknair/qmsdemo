@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <title>Create Quotation | QMS</title>
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-
 <style>
     body {
         margin: 0;
@@ -14,7 +13,6 @@
         background: #0d1326;
         color: white;
     }
-
     .container {
         max-width: 1100px;
         margin: 40px auto;
@@ -152,6 +150,22 @@
     color: #ffd700 !important;
 }
 
+/* ✅ FORCE PRODUCT DROPDOWN TO SHOW */
+td select.product-select {
+    min-width: 180px;
+    width: 100%;
+    display: block;
+}
+
+/* Optional – better alignment */
+td {
+    vertical-align: middle;
+}
+.product-select:focus {
+    background-color: #1c233b !important;
+    color: #ffd700 !important;
+    outline: none;
+}
 
 </style>
 </head>
@@ -225,7 +239,6 @@
 
 <!-- PRODUCT TABLE -->
 <h2 class="section-title"><i class="ri-archive-line"></i> Product Table</h2>
-
 <table>
     <thead>
         <tr>
@@ -242,30 +255,53 @@
     </thead>
 
     <tbody id="product-body">
-        <tr>
+        <tr class="product-row">
             <td>
-    <select name="product" class="product-select" required>
-        <option value="" disabled selected>— Select Product —</option>
-        {% for product in products %}
-        <option 
-            value="{{ product.id }}"
-            data-price="{{ product.unit_price }}"
-            data-desc="{{ product.description|default_if_none:'' }}"
-            data-pack="{{ product.pack_size|default_if_none:'' }}"
-        >
-            {{ product.name }}
-        </option>
-        {% endfor %}
-    </select>
-</td>
-            <td><input type="text" name="desc" placeholder="Description (optional)"></td>
-            <td><input type="text" name="pack_size" placeholder="20L / 25KG / Drum" required></td>
-            <td><input type="number" class="unit-price" name="unit_price[]" readonly></td>
-            <td><input type="number" class="discount" name="discount[]" value="0" min="0" max="100"></td>
-            <td><input type="number" class="final-price" name="final_price[]" readonly></td>
-            <td><input type="number" class="qty" name="qty[]" value="1" min="1"></td>
-            <td><input type="number" class="total" name="total[]" readonly></td>
-            <td><button type="button" class="btn" style="background:#ff4c4c;" onclick="removeRow(this)">X</button></td>
+                <select name="product_id[]" class="product-select">
+                    <option value="">— Select Product —</option>
+                    {% for p in products %}
+                    <option 
+                        value="{{ p.id }}"
+                        data-price="{{ p.unit_price }}"
+                        data-desc="{{ p.description|default_if_none:'' }}"
+                        data-pack="{{ p.pack_size|default_if_none:'' }}">
+                        {{ p.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
+
+            <td>
+                <input type="text" name="desc" placeholder="Description">
+            </td>
+
+            <td>
+                <input type="text" name="pack_size" placeholder="20L / 25KG">
+            </td>
+
+            <td>
+                <input type="number" class="unit-price" name="unit_price[]" readonly>
+            </td>
+
+            <td>
+                <input type="number" class="discount" name="discount[]" value="0" min="0" max="100">
+            </td>
+
+            <td>
+                <input type="number" class="final-price" name="final_price[]" readonly>
+            </td>
+
+            <td>
+                <input type="number" class="qty" name="qty[]" value="1" min="1">
+            </td>
+
+            <td>
+                <input type="number" class="total" name="total[]" readonly>
+            </td>
+
+            <td>
+                <button type="button" class="btn" style="background:#ff4c4c;" onclick="removeRow(this)">X</button>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -273,10 +309,8 @@
 <button type="button" class="add-row-btn" onclick="addRow()">+ Add Product Row</button>
 
 <h3 style="color:#ffd700; margin-top:20px;">
-    Grand Total: <span id="grand-total">0.00</span> OMR
+    Grand Total: <span id="grand-total">0.000</span> OMR
 </h3>
-
-
 
 <!-- TERMS -->
 <h2 class="section-title"><i class="ri-file-text-line"></i> Terms & Conditions</h2>
@@ -450,83 +484,68 @@ document.getElementById("client-select").addEventListener("change", function () 
 
 
 
-/* ------------------ UPDATE PRODUCT ROW ------------------ */
+/* ================= UPDATE PRODUCT ROW ================= */
+
+document.addEventListener("change", function (e) {
+    if (
+        e.target.classList.contains("product-select") ||
+        e.target.classList.contains("qty") ||
+        e.target.classList.contains("discount")
+    ) {
+        const row = e.target.closest(".product-row");
+        if (row) updateRow(row);
+    }
+});
+
 function updateRow(row) {
-    let productSelect = row.querySelector(".product-select");
-    let unitPrice = row.querySelector(".unit-price");
-    let discount = row.querySelector(".discount");
-    let finalPrice = row.querySelector(".final-price");
-    let qty = row.querySelector(".qty");
-    let total = row.querySelector(".total");
-    let descInput = row.querySelector("input[name='desc']");
-    let packInput = row.querySelector("input[name='pack_size']");
+    const product = row.querySelector(".product-select")?.selectedOptions[0];
+    if (!product || !product.value) return;
 
-    let opt = productSelect.selectedOptions[0];
-    if (!opt) return;
+    const unitPrice = parseFloat(product.dataset.price || 0);
+    const qty = parseInt(row.querySelector(".qty").value || 1);
+    const discount = parseFloat(row.querySelector(".discount").value || 0);
 
-    unitPrice.value = parseFloat(opt.dataset.price).toFixed(3);
-    descInput.value = opt.dataset.desc || "";
-    packInput.value = opt.dataset.pack || "";
+    row.querySelector("input[name='desc']").value = product.dataset.desc || "";
+    row.querySelector("input[name='pack_size']").value = product.dataset.pack || "";
+    row.querySelector(".unit-price").value = unitPrice.toFixed(3);
 
-    let base = parseFloat(unitPrice.value);
-    let disc = parseFloat(discount.value) || 0;
-
-    finalPrice.value = (base - (base * disc / 100)).toFixed(3);
-    total.value = (finalPrice.value * qty.value).toFixed(3);
+    const finalPrice = unitPrice - (unitPrice * discount / 100);
+    row.querySelector(".final-price").value = finalPrice.toFixed(3);
+    row.querySelector(".total").value = (finalPrice * qty).toFixed(3);
 
     calculateGrandTotal();
 }
 
-document.addEventListener("change", function (e) {
-    if (e.target.classList.contains("product-select") ||
-        e.target.classList.contains("qty") ||
-        e.target.classList.contains("discount")) {
+/* ================= GRAND TOTAL ================= */
 
-        updateRow(e.target.closest("tr"));
-    }
-});
-
-
-/* ------------------ GRAND TOTAL ------------------ */
 function calculateGrandTotal() {
     let total = 0;
-    document.querySelectorAll(".total").forEach(t => total += parseFloat(t.value) || 0);
+    document.querySelectorAll(".total").forEach(t => {
+        total += parseFloat(t.value || 0);
+    });
     document.getElementById("grand-total").innerText = total.toFixed(3);
 }
 
+/* ================= ROW HANDLING ================= */
 
-
-/* ------------------ ADD PRODUCT ROW ------------------ */
 function addRow() {
-    const firstRow = document.querySelector("#product-body tr");
-    const newRow = firstRow.cloneNode(true);
-
-    newRow.querySelector(".unit-price").value = "";
-    newRow.querySelector(".discount").value = 0;
-    newRow.querySelector(".final-price").value = "";
-    newRow.querySelector(".qty").value = 1;
-    newRow.querySelector(".total").value = "";
-
-    newRow.querySelector("input[name='desc']").value = "";
-    newRow.querySelector("input[name='pack_size']").value = "";
-
-    newRow.querySelector(".product-select").innerHTML =
-        document.getElementById("product-options-template").innerHTML;
-
-    document.querySelector("#product-body").appendChild(newRow);
+    const row = document.querySelector(".product-row").cloneNode(true);
+    row.querySelectorAll("input").forEach(i => i.value = "");
+    row.querySelector(".qty").value = 1;
+    row.querySelector(".discount").value = 0;
+    row.querySelector(".product-select").value = "";
+    document.getElementById("product-body").appendChild(row);
 }
 
-
-
-/* ------------------ REMOVE ROW ------------------ */
 function removeRow(btn) {
-    let rows = document.querySelectorAll("#product-body tr");
-    if (rows.length > 1) {
-        btn.closest("tr").remove();
-        calculateGrandTotal();
+    const rows = document.querySelectorAll(".product-row");
+    if (rows.length === 1) {
+        alert("At least one product is required.");
+        return;
     }
+    btn.closest(".product-row").remove();
+    calculateGrandTotal();
 }
-
 
 
 /* ------------------ INTRO & CLOSING TEXT AUTOFILL ------------------ */
@@ -541,10 +560,23 @@ document.getElementById("closing-select").addEventListener("change", function ()
 
 /* ------------------ FORM SUBMIT ------------------ */
 function submitForm(actionType) {
+
+    // 🔥 REMOVE EMPTY PRODUCT ROWS
+    document.querySelectorAll(".product-row").forEach(row => {
+        if (!row.querySelector(".product-select").value) {
+            row.remove();
+        }
+    });
+
+    // 🔒 FINAL SAFETY CHECK
+    if (document.querySelectorAll(".product-row").length === 0) {
+        alert("Please add at least one product.");
+        return;
+    }
+
     document.getElementById("actionType").value = actionType;
     document.getElementById("qtnForm").submit();
 }
-
 
 
 /* ------------------ MODAL FUNCTIONS ------------------ */
