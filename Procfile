@@ -1,4 +1,5 @@
-web: gunicorn qms_project.wsgi:application
+web: gunicorn wsgi:application
+
 
 
 
