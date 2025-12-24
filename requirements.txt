@@ -2,8 +2,12 @@ Django==5.2.7
 gunicorn
 whitenoise
 psycopg2-binary
+dj-database-url
 python-dotenv
 reportlab
 xhtml2pdf
-dj-database-url
+PyPDF2
+num2words
+
+
 
