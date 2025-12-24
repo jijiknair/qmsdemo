@@ -244,13 +244,20 @@
     <tbody id="product-body">
         <tr>
             <td>
-                <select name="product" class="form-control product-select">
-                    <option value="">Select Product</option>
-                    {% for product in products %}
-                        <option value="{{ product.id }}">{{ product.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
+    <select name="product" class="product-select" required>
+        <option value="" disabled selected>— Select Product —</option>
+        {% for product in products %}
+        <option 
+            value="{{ product.id }}"
+            data-price="{{ product.unit_price }}"
+            data-desc="{{ product.description|default_if_none:'' }}"
+            data-pack="{{ product.pack_size|default_if_none:'' }}"
+        >
+            {{ product.name }}
+        </option>
+        {% endfor %}
+    </select>
+</td>
             <td><input type="text" name="desc" placeholder="Description (optional)"></td>
             <td><input type="text" name="pack_size" placeholder="20L / 25KG / Drum" required></td>
             <td><input type="number" class="unit-price" name="unit_price[]" readonly></td>
